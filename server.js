@@ -1,7 +1,7 @@
 var path = require('path');
 var express = require('express');
 var bodyParser     =        require("body-parser");
-
+var fs=require('fs');
 
 var app = express();
 
@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 
 
 var staticPath = path.join(__dirname, '/web');
-app.use(express.static(staticPath));
+app.use(express.static(staticPath,{index:'index.html'}));
 
 var solver=require('./solver');
 
@@ -31,10 +31,32 @@ app.post("/result",(res,rep)=>{
         }
     }
     solver(data,(sol)=>{
+        
         rep.send(sol);
         rep.end();
     
     });
+
+})
+
+
+app.post('/save',(res,rep)=>{
+    fs.writeFile(path.join(__dirname, `/saved/${res.body.level}.json`), JSON.stringify(res.body.layout), ()=>{
+        rep.send('saved');
+        rep.end();
+    })
+
+
+})
+
+app.post('/load',(res,rep)=>{
+    fs.readFile(path.join(__dirname, `/saved/${res.body.level}.json`), (err,data)=>{
+    if(data){
+        rep.send(JSON.parse(data? data.toString():{}));
+      }
+        rep.end();
+    })
+
 
 })
 

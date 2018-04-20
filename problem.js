@@ -11,7 +11,7 @@ function fromData(data){
 var raw; 
 var split='';
 
-data = data.replace(/qu?/g,'~').split('\r')
+data = data.toLowerCase().replace(/qu?/g,'~').split('\r')
 
 if (data[0].indexOf(',')>=0){
     split=',';
