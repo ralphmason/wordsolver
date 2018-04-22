@@ -1,3 +1,4 @@
+
 var path = require('path');
 var express = require('express');
 var bodyParser     =        require("body-parser");
@@ -39,6 +40,51 @@ app.post("/result",(res,rep)=>{
 
 })
 
+app.post("/hilight",(res,rep)=>{
+    var prob=res.body.data;
+    var word=res.body.word;
+
+    var data='';
+
+    for(var r=0;r<8;r++){
+        for(var c=0;c<8;c++){
+            data+=prob[(r*8)+c] ||'';
+            if(c<7){
+                data+=','
+            }
+        }
+        if ( r <7){
+            data +='\r';
+        }
+    }
+    solver(data,word,(sol)=>{
+    
+    
+        function find(x){
+            for(var i =0;i<x.length;i++){
+                var ele=x[i];
+                if (Array.isArray(ele)){
+                    if(ele.length==64){
+                        return ele;
+                    }
+                        
+                    var ret=find(ele);
+
+                    if (ret){
+                        return ret;
+                    }
+                }
+            }
+            return null;
+        }
+        var toSend=find(sol);
+        rep.send(toSend||{});
+        rep.end();
+    
+    });
+
+})
+
 
 app.post('/save',(res,rep)=>{
     fs.writeFile(path.join(__dirname, `/saved/${res.body.level}.json`), JSON.stringify(res.body.layout), ()=>{
@@ -56,7 +102,6 @@ app.post('/load',(res,rep)=>{
       }
         rep.end();
     })
-
 
 })
 

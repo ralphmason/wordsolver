@@ -71,3 +71,6 @@ const header = (...args) => makeElement(`header`, ...args);
 const p = (...args) => makeElement(`p`, ...args);
 const span = (...args) => makeElement(`span`, ...args);
 const input = (...args) => makeElement(`input`, ...args);
+const table = (...args) => makeElement(`table`, ...args);
+const tr = (...args) => makeElement(`tr`, ...args);
+const td = (...args) => makeElement(`td`, ...args);

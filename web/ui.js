@@ -8,53 +8,45 @@ const STATES={
     book_closed:'bc'
 }
 
+var transitions={};
+         
+var raw =[STATES.enabled,
+            STATES.disabled,
+            STATES.exclaim,
+            /*STATES.book_open,
+            STATES.book_closed,*/
+            STATES.enabled];
+
+for(var i=0;i<raw.length-1;i++){
+   transitions[raw[i]]=raw[i+1];
+}
+
+var maintable = table({className:'puztab'});
+puz.append(maintable);
+
+
 for(var ro=0; ro<8;ro++){
-    var r = div({className:'row'});
+
+    var row=tr({className:'row'});
 
     for( var co = 0 ; co<8 ;co++){
         var id = ((ro*8)+co);
-        var edit =  input({type:'text',id:"e"+id});
-        edit.style.width="30px";
-        edit.style.height="30px";
-        
-        var btn = button({className:'btn btn-primary mb-2',id:"b"+id},STATES.enabled);
-        btn.style.width="30px";
-        btn.style.height="30px"; 
-          
-        r.appendChild(
-            div({className:'col-sm-1 m-0 p-0'},
-                div({className:'input-group'},
-                    edit,
-                    btn
-                )
-            )
-         );
-
-
-         var transitions={};
-         
-         var raw =[STATES.enabled,
-                     STATES.disabled,
-                     STATES.exclaim,
-                     STATES.book_open,
-                     STATES.book_closed,
-                     STATES.enabled];
-    
-        for(var i=0;i<raw.length-1;i++){
-            transitions[raw[i]]=raw[i+1];
-        }
-        
+        var edit =  input({type:'text',id:"e"+id,className:'edit'});
+        var btn = button({className:'button',id:"b"+id},STATES.enabled);
+           
+        row.appendChild((td(span({id:'i'+id,className:'info'}),edit,btn)));
+       
+             
         btn.onclick=(x)=>{
             var btn=x.currentTarget;
             var edit=btn.previousSibling;
             set_state(edit, btn, transitions[btn.innerHTML])
         }
 
-        puz.append(r);
-  
+        maintable.append(row);
+    }
 }
 
-}
 //hide column 8
 iterate((id,edit,button)=>{  
     if (id%8==7){
@@ -69,12 +61,13 @@ var solve = button("Solve it");
 var level = input();
 var save=button('Save')
 var load=button('Load')
-var reset=button('Reset')
+var reset=button('Reset');
+level.style.width='100px';
 
-puz.append(div({className:'row'},
-    div({className:'col-sm-12'},solve,span(' '),
-    flip,span(' Level '),level,span(' '),load,span(' '),save,span(' ',reset))
-));
+puz.append(div(' '),
+    div(solve, span(' Level '),level,span(' '),load,span(' '),save,span(' ',reset)),
+    div(' ')
+);
 
 solve.onclick=()=>{
     var obj={};
@@ -95,17 +88,145 @@ solve.onclick=()=>{
         data: JSON.stringify(obj),
         contentType: "application/json",
         complete: (result)=>{
+            $('#result').html('');
+            
             var r = result.responseJSON;
             r=r.sort((x,y)=>y.length-x.length);
 
-            var html='<table class=".table"><tr><th>Word</th><th>Length</th></tr>';
+            var cols = Math.max(Math.floor(r.length/7),1)
+            var row=tr();
+            var columns=table(row);
+             for(var i=0;i<cols;i++){
+                var d=td();
+                row.appendChild(d);
 
-            r.map(res=>`<tr><td>${res.replace(/~/,'qu')}</td><td>${res.length}</td></tr>\r\n`).forEach(element => {
-                html+=element;
+                var arr=[];
+                while(r.length >0 && arr.length<7){
+                    arr.push(r.shift())
+                }
+                
+                var html='<table>';
+
+                arr.map(res=>`<tr  class="result"><td>${res.replace(/~/,'qu')}</td><td>${res.length}</td></tr>\r\n`).forEach(element => {
+                    html+=element;
+                });
+                html+='</table>'
+
+                d.innerHTML+=html;
+
+            }
+
+            $('#result').append(columns);
+
+            var timeout;
+            var hilight_happened=false;
+            var cancelled=false;
+            var pending=false;
+
+            $('#result').mouseover((x)=>{
+
+                if(x.target.tagName!='TD')
+                    return;
+
+                var word=x.target.parentElement.firstElementChild.innerHTML;
+
+                timeout= setTimeout(()=>{
+
+                    if(hilight_happened){
+                        return;
+                    }
+                    
+                    if(pending){
+                        return;
+                    }
+
+                    pending=true;
+
+                    $.ajax({
+                        url: "hilight",
+                        type: "POST",
+                        data: JSON.stringify({word:word,data:obj}),
+                        contentType: "application/json",
+                        complete: (result)=>{
+
+                            var h=result.responseJSON;
+
+                            var locations=[];
+
+                            iterate((id,edit,button)=>{
+                                if(h[id]){
+                                    locations[parseInt(h[id].substr(1))-1]=id;
+                                    edit.old=edit.style.backgroundColor;
+                                    edit.style.backgroundColor='chartreuse';
+                                    document.getElementById('i'+id).innerHTML=h[id].substr(1);
+                                }
+                            });
+
+                            if(locations.length>4){
+                                var val=Math.min(2,locations.length-5);
+                                var last=locations.pop();
+                                var second=locations.pop();
+
+                                var diff=Math.abs(last-second);
+                                var hichar='';
+
+                                switch(diff){
+                                    case 1: //east West
+                                        hichar=[3,2,0][val];
+                                        break;
+                                    case 8:
+                                        hichar=[4,2,0][val];
+                                        break;
+                                    default:
+                                        if(last>second){
+                                            if(last%8<second%8)
+                                                hichar=[6,1,0][val];
+                                             else
+                                                 hichar=[5,1,0][val];
+                                             
+                                         }
+                                         else{
+                                            if(last%8<second%8)
+                                                hichar=[5,1,0][val]
+                                             else
+                                                hichar=[6,1,0][val]
+                                        }
+
+                                    }
+
+                                document.getElementById('e'+last).style.backgroundImage=`url(${hichar}.png)`;
+                                document.getElementById('e'+last).style.backgroundColor='#f300ff';
+                            }
+
+                            pending=false;
+                            hilight_happened=true;
+                        }
+                 
+                    })
+                    }, 250);
             });
-            html+='</table>'
 
-            $('#result').html(html);
+            $('#result').mouseout((x)=>{
+                if(timeout){
+                    clearTimeout(timeout);
+                    timeout=null;
+                }
+                if(hilight_happened){
+                
+                console.log('mouseout')
+
+                iterate((id,edit,button)=>{
+                     edit.style.backgroundColor=null;
+                     edit.style.fontSize=null;
+                     edit.style.backgroundImage=null;
+                     document.getElementById('i'+id).innerHTML='';
+                
+                      
+                });
+                hilight_happened=false;
+                }
+            });
+
  
 
            }
@@ -121,6 +242,10 @@ puz.keyup((x)=>{
         return;
     }
 
+    if(x.which==16){//shift
+        return;
+    }
+
     function isdisabled(id){
         document.getElementById('e'+id).disabled==true
     }
@@ -129,17 +254,14 @@ puz.keyup((x)=>{
     }
 
     
-
-    if(ele.value.length>1){
-        ele.value=ele.value[0];
-    }
+    ele.value=ele.value.slice(-1).toUpperCase();
 
     var id=parseInt(ele.id.substr(1));
     var next=id+1;
    
     
     switch(x.which){
-        //case 37: //left defualty behavior
+        //case 37: //right defualty behavior
         //break;
         case 38: //up
             while(true){
@@ -191,6 +313,7 @@ puz.keyup((x)=>{
     }
 
     document.getElementById('e'+next).focus();
+    $('#result').html('');
 
 
 });
@@ -250,6 +373,8 @@ reset.onclick=()=>{
         edit.value='';
         set_state(edit, btn, id%8==7?STATES.disabled:STATES.enabled);
     });
+    $('#result').html('');
+
 }
 
 function edit_butt(id){
@@ -282,7 +407,8 @@ function set_state(edit,btn,state){
     }
 
     edit.disabled=states[state];
-    edit.style.backgroundColor=edit.disabled?'grey':'white';
+    edit.style.backgroundColor='#51555';
+    edit.style.visibility=edit.disabled?'hidden':'visible';
 
 }
 
@@ -295,6 +421,11 @@ load.onclick=()=>{
         contentType: "application/json",
         complete: (result)=>{
             var lay=result.responseJSON;
+
+            if(lay==null){
+                alert('no one has created this level yet, perhaps you could lay it out and save it for everyone to use');
+                return;
+            }
 
             iterate((id,edit,butt)=>{
                 edit.value='';

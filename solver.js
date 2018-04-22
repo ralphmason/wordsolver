@@ -1,10 +1,22 @@
 
 
-module.exports=function(data,result){
+module.exports=function(data){
 
 var _ = require('lodash');
 var p=require('./problem').fromData(data);
 var lineReader=require('line-reader');
+var result;
+var word
+if (arguments.length==3){
+    word=arguments[1];
+    result=arguments[2];
+    
+
+    return result(p(word.replace(/q/,"~")));
+}
+else{
+    result=arguments[1];
+}
 
 //p("set");
 //p("seins");
@@ -16,7 +28,10 @@ var filename='wordlist2.txt';
 
 var ret=[];
 
-lineReader.eachLine(filename, function(line, last) {
+var reader=lineReader;
+
+
+reader.eachLine(filename, function(line, last) {
     line=line.replace(/qu/g,'~');
     var res=p(line);
     if(res.length){
