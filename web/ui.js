@@ -80,17 +80,19 @@ solve.onclick=()=>{
         }
    });
 
-    $('#result').html("<p>Consulting the oracle...</p>");
+   var result=document.getElementById('result');
+
+    result.innerHTML=("<p>Consulting the oracle...</p>");
 
     $.ajax({
         url: "result",
         type: "POST",
         data: JSON.stringify(obj),
         contentType: "application/json",
-        complete: (result)=>{
+        complete: (res)=>{
             $('#result').html('');
             
-            var r = result.responseJSON;
+            var r = res.responseJSON;
             r=r.sort((x,y)=>y.length-x.length);
 
             var cols = Math.max(Math.floor(r.length/7),1)
@@ -116,15 +118,15 @@ solve.onclick=()=>{
 
             }
 
-            $('#result').append(columns);
+            result.appendChild(columns);
 
             var timeout;
             var hilight_happened=false;
             var cancelled=false;
             var pending=false;
 
-            $('#result').mouseover((x)=>{
-
+            result.onmouseover=(x)=>{
+                console.log('mouse over')
                 if(x.target.tagName!='TD')
                     return;
 
@@ -141,6 +143,8 @@ solve.onclick=()=>{
                     }
 
                     pending=true;
+
+                    console.log('making call');
 
                     $.ajax({
                         url: "hilight",
@@ -204,9 +208,9 @@ solve.onclick=()=>{
                  
                     })
                     }, 250);
-            });
+            };
 
-            $('#result').mouseout((x)=>{
+            result.onmouseout=(x)=>{
                 if(timeout){
                     clearTimeout(timeout);
                     timeout=null;
@@ -225,7 +229,7 @@ solve.onclick=()=>{
                 });
                 hilight_happened=false;
                 }
-            });
+            }
 
  
 
@@ -247,10 +251,10 @@ puz.keyup((x)=>{
     }
 
     function isdisabled(id){
-        document.getElementById('e'+id).disabled==true
+        return document.getElementById('e'+id).disabled==true
     }
     function focus(id){
-        document.getElementById('e'+id).focus();
+        return document.getElementById('e'+id).focus();
     }
 
     
@@ -281,7 +285,7 @@ puz.keyup((x)=>{
             id -=1;
 
             if( id<0){
-                return;
+                id=63;
             }
             if (!isdisabled(id))
                 return focus(id)
