@@ -52,9 +52,6 @@ reader.eachLine(filename, function(line, last) {
         
         r.forEach(x=>{
             var crap = _.filter(x[1],x=>x);
-
-            
-
             console.log(`${x[0].length}:${x[0]} ${crap}`);
         });
         

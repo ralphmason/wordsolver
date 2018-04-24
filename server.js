@@ -1,7 +1,7 @@
 
 var path = require('path');
 var express = require('express');
-var bodyParser     =        require("body-parser");
+var bodyParser = require("body-parser");
 var fs=require('fs');
 
 var app = express();
@@ -32,10 +32,8 @@ app.post("/result",(res,rep)=>{
         }
     }
     solver(data,(sol)=>{
-        
         rep.send(sol);
         rep.end();
-    
     });
 
 })
@@ -57,9 +55,8 @@ app.post("/hilight",(res,rep)=>{
             data +='\r';
         }
     }
-    solver(data,word,(sol)=>{
     
-    
+    solver(data,word,(sol)=>{  
         function find(x){
             for(var i =0;i<x.length;i++){
                 var ele=x[i];
@@ -82,18 +79,15 @@ app.post("/hilight",(res,rep)=>{
         rep.end();
     
     });
-
-})
+});
 
 
 app.post('/save',(res,rep)=>{
     fs.writeFile(path.join(__dirname, `/saved/${res.body.level}.json`), JSON.stringify(res.body.layout), ()=>{
         rep.send('saved');
         rep.end();
-    })
-
-
-})
+    });
+});
 
 app.post('/load',(res,rep)=>{
     fs.readFile(path.join(__dirname, `/saved/${res.body.level}.json`), (err,data)=>{
@@ -101,9 +95,8 @@ app.post('/load',(res,rep)=>{
         rep.send(JSON.parse(data? data.toString():{}));
       }
         rep.end();
-    })
-
-})
+    });
+});
 
 app.listen(3000, function() {
   console.log('listening');
