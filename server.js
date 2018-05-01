@@ -3,12 +3,10 @@ var path = require('path');
 var express = require('express');
 var bodyParser = require("body-parser");
 var fs=require('fs');
-
 var app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
 
 var staticPath = path.join(__dirname, '/web');
 app.use(express.static(staticPath,{index:'index.html'}));
@@ -42,6 +40,9 @@ app.post("/hilight",(res,rep)=>{
     var prob=res.body.data;
     var word=res.body.word;
 
+    word=word.replace(/qu/g,'~');
+   
+
     var data='';
 
     for(var r=0;r<8;r++){
@@ -55,7 +56,7 @@ app.post("/hilight",(res,rep)=>{
             data +='\r';
         }
     }
-    
+
     solver(data,word,(sol)=>{  
         function find(x){
             for(var i =0;i<x.length;i++){
@@ -98,7 +99,10 @@ app.post('/load',(res,rep)=>{
     });
 });
 
-app.listen(3000, function() {
-  console.log('listening');
+var port = 3000;
+
+
+app.listen(port, function() {
+  console.log('listening on'+port);
 });
 

@@ -75,14 +75,14 @@ solve.onclick=()=>{
     iterate((i,e,but)=>{
         var ex=but.innerHTML=="!"?"!":"";
 
-        if(!e.disabledv&& e){
+        if(!e.disabled&& e){
             obj[i]=e.value+ex;
         }
    });
 
    var result=document.getElementById('result');
 
-    result.innerHTML=("<p>Consulting the oracle...</p>");
+    result.innerHTML=("<p>Querying the oracle...</p>");
 
     $.ajax({
         url: "result",
@@ -109,7 +109,7 @@ solve.onclick=()=>{
                 
                 var html='<table>';
 
-                arr.map(res=>`<tr  class="result"><td>${res.replace(/~/,'qu')}</td><td>${res.length}</td></tr>\r\n`).forEach(element => {
+                arr.map(res=>`<tr  class="result"><td>${res.replace(/~/g,'qu')}</td><td>${res.length}</td></tr>\r\n`).forEach(element => {
                     html+=element;
                 });
                 html+='</table>'
