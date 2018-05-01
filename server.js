@@ -99,6 +99,23 @@ app.post('/load',(res,rep)=>{
     });
 });
 
+
+app.post('/works',(res,rep)=>{
+    var word=res.body.word;
+
+    fs.appendFile('good.txt',word+'\r', function (err) {
+       rep.end();
+      });
+});
+app.post('/didnt',(res,rep)=>{
+    var word=res.body.word;
+
+    fs.appendFile('bad.txt',word+'\r', function (err) {
+       rep.end();
+      });
+});
+
+
 var port = 3000;
 
 

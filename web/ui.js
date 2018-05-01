@@ -82,6 +82,8 @@ solve.onclick=()=>{
 
    var result=document.getElementById('result');
 
+    clear_results();
+
     result.innerHTML=("<p>Querying the oracle...</p>");
 
     $.ajax({
@@ -125,6 +127,16 @@ solve.onclick=()=>{
             var cancelled=false;
             var pending=false;
 
+            result.onclick=(x)=>{
+                if(x.target.tagName!='TD')
+                return;
+
+                var word=x.target.parentElement.firstElementChild.innerHTML;
+
+                el('selection').style.visibility='visible';
+                el('tword').value=word;
+            }
+
             result.onmouseover=(x)=>{
                 console.log('mouse over')
                 if(x.target.tagName!='TD')
@@ -162,7 +174,7 @@ solve.onclick=()=>{
                                     locations[parseInt(h[id].substr(1))-1]=id;
                                     edit.old=edit.style.backgroundColor;
                                     edit.style.backgroundColor='chartreuse';
-                                    document.getElementById('i'+id).innerHTML=h[id].substr(1);
+                                    el('i'+id).innerHTML=h[id].substr(1);
                                 }
                             });
 
@@ -198,8 +210,8 @@ solve.onclick=()=>{
 
                                     }
 
-                                document.getElementById('e'+last).style.backgroundImage=`url(${hichar}.png)`;
-                                document.getElementById('e'+last).style.backgroundColor='#f300ff';
+                                el('e'+last).style.backgroundImage=`url(${hichar}.png)`;
+                                el('e'+last).style.backgroundColor='#f300ff';
                             }
 
                             pending=false;
@@ -223,16 +235,11 @@ solve.onclick=()=>{
                      edit.style.backgroundColor=null;
                      edit.style.fontSize=null;
                      edit.style.backgroundImage=null;
-                     document.getElementById('i'+id).innerHTML='';
-                
-                      
+                     el('i'+id).innerHTML=''; 
                 });
                 hilight_happened=false;
                 }
             }
-
- 
-
            }
         }
     );
@@ -369,7 +376,40 @@ save.onclick=()=>{
             }
         }
     );
+}
 
+function saveword(verb){
+
+    $.ajax({
+        url: verb,
+        type: "POST",
+        data: JSON.stringify({word:el('tword').value}),
+        contentType: "application/json",
+        complete: (result)=>{
+           alert("Saved")
+            }
+        }
+    );
+
+}
+
+
+function el(x){
+    return document.getElementById(x)
+}
+
+el('bworks').onclick=()=>{
+ saveword('works');
+}
+
+el('bdidnt').onclick=()=>{
+  saveword('didnt');
+}
+
+
+function clear_results(){
+    el('result').innerHTML='';
+    el('selection').style.visibility='hidden';
 }
 
 reset.onclick=()=>{
@@ -377,7 +417,7 @@ reset.onclick=()=>{
         edit.value='';
         set_state(edit, btn, id%8==7?STATES.disabled:STATES.enabled);
     });
-    $('#result').html('');
+    clear_results();
 
 }
 
