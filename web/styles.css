@@ -24,16 +24,19 @@
 
 .row {
     visibility: visible;
+    height: 55px;
 
 }
 
 .button {
-    width: 20px;
-    height: 30px;
     background-color: white;
     color: rgb(235, 52, 36);
     font-family: Arial Rounded MT Bold;
     font-size: 20px;
+    width: 1px;
+    height: 2em;
+    border: 0px;
+
 }
 
 .puztab {
@@ -51,10 +54,10 @@
 }
 
 .info {
-    position: absolute;
     font-family: Arial Rounded MT Bold;
     color: rgb(235, 52, 36);
     z-index: 100;
     font-weight: bold;
+    display: inline;
 
 }
