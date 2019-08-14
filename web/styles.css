@@ -1,59 +1,60 @@
-
 @font-face {
     src: url("Juicebox.otf") format("opentype");
     font-family: Juicebox;
 }
 
-.edit{
+.edit {
     width: 50px;
     height: 50px;
-    background-color:rgb(234,219,192);
-    color:rgb(116,73,62);
+    background-color: rgb(234, 219, 192);
+    color: rgb(116, 73, 62);
     text-align: center;
-    font-size: 40px;
+    font-size: 175%;
     font-weight: bold;
-    -moz-border-radius:10px;
-    -webkit-border-radius:10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
     border-radius: 10px;
     font-family: 'Arial Rounded MT Bold';
 
- }
- .edit:focus{
-     background-color: chartreuse;
- }
-.row {
-     visibility: visible;
-  }
-
-.button{
-    width: 20px;
-    height: 30px;
-    background-color : white;
-    color:  rgb(235,52,36);
-    font-family: Arial Rounded MT Bold;
-    font-size:20px;
 }
 
-.puztab{
-    margin: 0%;
-}
-
-.result{
-    font-family: Arial Rounded MT Bold;
-    font-size:15px;
-
-}
-
-.result:hover{
+.edit:focus {
     background-color: chartreuse;
 }
 
-.info{
+.row {
+    visibility: visible;
+
+}
+
+.button {
+    width: 20px;
+    height: 30px;
+    background-color: white;
+    color: rgb(235, 52, 36);
+    font-family: Arial Rounded MT Bold;
+    font-size: 20px;
+}
+
+.puztab {
+    margin: 0%;
+}
+
+.result {
+    font-family: Arial Rounded MT Bold;
+    font-size: 15px;
+
+}
+
+.result:hover {
+    background-color: chartreuse;
+}
+
+.info {
     position: absolute;
     font-family: Arial Rounded MT Bold;
-     color:rgb(235,52,36);
-     z-index:100;
-     font-weight:bold;
-  
+    color: rgb(235, 52, 36);
+    z-index: 100;
+    font-weight: bold;
+
 }
-    

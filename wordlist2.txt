@@ -2553,7 +2553,6 @@ amnion
 amniota
 amniote
 amniotic
-amnis
 amobarbital
 amoebean
 amoebeaum
@@ -7009,6 +7008,7 @@ bidens
 bidental
 bidentate
 bidet
+bidi
 bidirectional
 biduous
 bien
@@ -10255,6 +10255,7 @@ carport
 carpospore
 carposporic
 carposporous
+carr
 carrack
 carrageenin
 carre
@@ -18061,7 +18062,6 @@ digress
 digression
 digressive
 dihydrostreptomycin
-diis
 dijudication
 dike
 dilaceration
@@ -33721,6 +33721,7 @@ kittiwake
 kitty
 kiwi
 klan
+klang
 klansman
 klaxon
 kleenex
@@ -52428,7 +52429,6 @@ sadomasochism
 sadomasochist
 sadomasochistic
 saek
-saepe
 safar
 safari
 safe
